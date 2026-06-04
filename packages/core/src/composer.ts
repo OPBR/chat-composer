@@ -3,7 +3,6 @@ import type {
   ComposerController,
   ComposerPlugin,
   ComposerState,
-  ComposedMessage,
   MentionItem,
   MessagePart,
   ImagePart,
