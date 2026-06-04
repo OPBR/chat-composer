@@ -18,13 +18,13 @@ const CODE_PATTERNS: Array<[RegExp, string]> = [
 ]
 
 const CODE_SIGNALS = [
-  /[{};]/,           // statement endings / blocks
-  /=>/,              // arrow functions
-  /\(\)\s*[{=]/,     // function calls or definitions
-  /\.\w+\(.*\)/,     // method calls
-  /\/\/.+/,          // single-line comments
+  /[{};]/, // statement endings / blocks
+  /=>/, // arrow functions
+  /\(\)\s*[{=]/, // function calls or definitions
+  /\.\w+\(.*\)/, // method calls
+  /\/\/.+/, // single-line comments
   /\/\*[\s\S]*\*\//, // block comments
-  /#.+/,             // python comments or preprocessor
+  /#.+/, // python comments or preprocessor
 ]
 
 export function looksLikeCode(text: string): boolean {
