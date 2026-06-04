@@ -1,0 +1,39 @@
+{
+  "name": "@chat-composer/react",
+  "version": "0.1.0",
+  "description": "React bindings for chat-composer",
+  "keywords": ["ai", "chat", "react", "composer", "mention", "attachment"],
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.mts"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@chat-composer/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tsdown": "^0.22.1",
+    "typescript": "^6.0.3"
+  }
+}

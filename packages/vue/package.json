@@ -1,0 +1,36 @@
+{
+  "name": "@chat-composer/vue",
+  "version": "0.1.0",
+  "description": "Vue 3 bindings for chat-composer",
+  "keywords": ["ai", "chat", "vue", "vue3", "composer", "mention", "attachment"],
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.mts"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "@chat-composer/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "vue": ">=3.3.0"
+  },
+  "devDependencies": {
+    "vue": "^3.5.0",
+    "vue-tsc": "^3.3.0",
+    "tsdown": "^0.22.1",
+    "typescript": "^6.0.3"
+  }
+}

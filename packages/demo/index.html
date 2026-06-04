@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>chat-composer demo</title>
+  <style>
+    body { font-family: system-ui; max-width: 600px; margin: 40px auto; padding: 0 20px; }
+    .cc-input { min-height: 60px; padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
+    .cc-input:focus { border-color: #4a90d9; }
+    .cc-node-image img { max-height: 80px; max-width: 120px; border-radius: 4px; vertical-align: middle; margin: 0 2px; }
+    .cc-node-file { background: #f0f0f0; border-radius: 4px; padding: 2px 6px; font-size: 0.85em; vertical-align: middle; }
+    .output { background: #f5f5f5; padding: 12px; border-radius: 8px; margin-top: 16px; white-space: pre-wrap; font-size: 0.9em; }
+    .actions { margin-top: 8px; display: flex; gap: 8px; }
+    button { padding: 6px 16px; border-radius: 6px; border: 1px solid #ddd; cursor: pointer; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+  <h2>chat-composer demo</h2>
+  <div id="input" contenteditable="true" class="cc-input"></div>
+  <div class="actions">
+    <button id="send-btn" disabled>Send</button>
+    <button id="extract-btn">Extract</button>
+    <button id="clear-btn">Clear</button>
+    <button id="attach-btn">Attach file</button>
+    <input type="file" id="file-input" style="display:none" multiple />
+  </div>
+  <div class="output" id="output">Output will appear here...</div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
