@@ -11,12 +11,16 @@ chat-composer is a lightweight rich-text input component library for AI chat app
 
 ## Tech Stack
 
-- TypeScript 6 / Node 22 LTS / pnpm 9
+- TypeScript 6 / Node 22 LTS / pnpm 9+ (always use latest)
 - Build: tsdown (Rolldown-based) / Task orchestration: Turborepo
-- Test: Vitest (jsdom environment)
+- Test: Vitest 4 (jsdom environment)
 - Lint: ESLint 10 (single-root flat config) + Prettier
 - Commit convention: Conventional Commits (commitlint + husky + lint-staged)
 - Publish: Changesets + npm
+
+## Dependency Policy
+
+Always use the latest stable versions when adding or upgrading dependencies. Run `pnpm outdated -r` to check, and prefer major version upgrades when available (as long as tests pass). Never pin to old versions unless there's a documented compatibility reason.
 
 ## Commands
 
