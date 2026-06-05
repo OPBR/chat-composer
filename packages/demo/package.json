@@ -11,7 +11,7 @@
     "@chat-composer/core": "workspace:*"
   },
   "devDependencies": {
-    "vite": "^6.0.0",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vite": "^8.0.16"
   }
 }
