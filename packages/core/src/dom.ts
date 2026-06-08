@@ -61,6 +61,15 @@ export function createFileNode(id: string, fileName: string, sizeBytes: number):
   return span
 }
 
+export function createCodeBlockNode(id: string, language: string, code: string): HTMLElement {
+  const span = document.createElement('span')
+  span.setAttribute('contenteditable', 'false')
+  span.setAttribute('data-cc-type', 'code_block')
+  span.setAttribute('data-cc-id', id)
+  span.textContent = `${language}\n${code}`
+  return span
+}
+
 export function createMentionNode(id: string, label: string): HTMLElement {
   const span = document.createElement('span')
   span.setAttribute('contenteditable', 'false')
@@ -99,6 +108,13 @@ export function extractPartsFromDOM(
       if (ccType === 'mention') {
         const mention = mentionsMap.get(ccId)
         if (mention) parts.push(mention)
+      } else if (ccType === 'code_block') {
+        // Parse language\ncode from node textContent
+        const content = el.textContent ?? ''
+        const firstNewline = content.indexOf('\n')
+        const language = firstNewline === -1 ? '' : content.slice(0, firstNewline)
+        const code = firstNewline === -1 ? content : content.slice(firstNewline + 1)
+        parts.push({ type: 'code_block', language, code })
       } else if (ccType === 'image' || ccType === 'file') {
         const attachment = attachmentsMap.get(ccId)
         if (attachment) parts.push(attachment)
