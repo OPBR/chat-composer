@@ -7,13 +7,14 @@ import type {
   MessagePart,
   ImagePart,
   FilePart,
+  AttachmentPart,
   CodeBlockPart,
   MentionPart,
   TextPart,
-} from './types.js'
-import { detectLanguage, looksLikeCode } from './utils/codeDetection.js'
-import { buildComposedMessage } from './utils/message.js'
-import { resolveMentionSource } from './utils/mention.js'
+} from './types'
+import { detectLanguage, looksLikeCode } from './utils/codeDetection'
+import { buildComposedMessage } from './utils/message'
+import { resolveMentionSource } from './utils/mention'
 
 const DEFAULT_CONFIG: Required<
   Pick<
@@ -28,6 +29,10 @@ const DEFAULT_CONFIG: Required<
   maxLength: 32_000,
 }
 
+function generateId(): string {
+  return `cc_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`
+}
+
 export function createComposer(config: ComposerConfig = {}): ComposerController {
   const cfg = { ...DEFAULT_CONFIG, ...config }
   const plugins: ComposerPlugin[] = []
@@ -35,6 +40,7 @@ export function createComposer(config: ComposerConfig = {}): ComposerController 
 
   // ── Internal state ──────────────────────────────────────────────────────────
   let parts: MessagePart[] = []
+  let isComposing = false
   let isMentionOpen = false
   let mentionQuery = ''
   let mentionItems: MentionItem[] = []
@@ -42,8 +48,13 @@ export function createComposer(config: ComposerConfig = {}): ComposerController 
 
   // ── State helpers ───────────────────────────────────────────────────────────
   function snapshot(): ComposerState {
+    const attachments: AttachmentPart[] = parts.filter(
+      (p) => p.type === 'image' || p.type === 'file',
+    ) as AttachmentPart[]
     return {
       parts: [...parts],
+      attachments,
+      isComposing,
       isMentionOpen,
       mentionQuery,
       mentionItems: [...mentionItems],
@@ -122,11 +133,16 @@ export function createComposer(config: ComposerConfig = {}): ComposerController 
       return
     }
 
+    const id = generateId()
+
     if (file.type.startsWith('image/')) {
       const img: ImagePart = {
         type: 'image',
+        id,
         file,
-        url: URL.createObjectURL(file),
+        localUrl: URL.createObjectURL(file),
+        uploadStatus: 'local',
+        fileName: file.name,
         mimeType: file.type,
         sizeBytes: file.size,
       }
@@ -134,8 +150,10 @@ export function createComposer(config: ComposerConfig = {}): ComposerController 
     } else {
       const f: FilePart = {
         type: 'file',
+        id,
         file,
-        name: file.name,
+        uploadStatus: 'local',
+        fileName: file.name,
         mimeType: file.type,
         sizeBytes: file.size,
       }
@@ -144,25 +162,49 @@ export function createComposer(config: ComposerConfig = {}): ComposerController 
     notify()
   }
 
-  function removeAttachment(index: number) {
-    const attachments = parts
-      .map((p, i) => ({ p, i }))
-      .filter(({ p }) => p.type === 'image' || p.type === 'file')
-    const target = attachments[index]
-    if (!target) return
+  function removeAttachment(id: string) {
+    const idx = parts.findIndex((p) => (p.type === 'image' || p.type === 'file') && p.id === id)
+    if (idx === -1) return
 
+    const removed = parts[idx]
     // Revoke object URL to prevent memory leaks
-    if (target.p.type === 'image') URL.revokeObjectURL((target.p as ImagePart).url)
-    parts.splice(target.i, 1)
+    if (removed.type === 'image') URL.revokeObjectURL((removed as ImagePart).localUrl)
+    if (removed.type === 'file' && (removed as FilePart).localUrl) {
+      URL.revokeObjectURL((removed as FilePart).localUrl!)
+    }
+    parts.splice(idx, 1)
+    notify()
+  }
+
+  async function uploadAttachment(id: string) {
+    const part = parts.find((p) => (p.type === 'image' || p.type === 'file') && p.id === id)
+    if (!part || !cfg.onUpload) return
+
+    const attachment = part as AttachmentPart
+    attachment.uploadStatus = 'uploading'
+    notify()
+
+    try {
+      const remoteUrl = await cfg.onUpload(attachment.file, id)
+      attachment.remoteUrl = remoteUrl
+      attachment.uploadStatus = 'uploaded'
+    } catch (err) {
+      attachment.uploadStatus = 'error'
+      attachment.uploadError = err instanceof Error ? err.message : String(err)
+    }
     notify()
   }
 
   function clear() {
     // Revoke all image object URLs
     parts.forEach((p) => {
-      if (p.type === 'image') URL.revokeObjectURL((p as ImagePart).url)
+      if (p.type === 'image') URL.revokeObjectURL((p as ImagePart).localUrl)
+      if (p.type === 'file' && (p as FilePart).localUrl) {
+        URL.revokeObjectURL((p as FilePart).localUrl!)
+      }
     })
     parts = []
+    isComposing = false
     isMentionOpen = false
     mentionQuery = ''
     mentionItems = []
@@ -256,7 +298,10 @@ export function createComposer(config: ComposerConfig = {}): ComposerController 
   function destroy() {
     plugins.forEach((p) => p.onDestroy?.())
     parts.forEach((p) => {
-      if (p.type === 'image') URL.revokeObjectURL((p as ImagePart).url)
+      if (p.type === 'image') URL.revokeObjectURL((p as ImagePart).localUrl)
+      if (p.type === 'file' && (p as FilePart).localUrl) {
+        URL.revokeObjectURL((p as FilePart).localUrl!)
+      }
     })
     listeners.clear()
   }
@@ -272,6 +317,7 @@ export function createComposer(config: ComposerConfig = {}): ComposerController 
     insertCodeBlock,
     attachFile,
     removeAttachment,
+    uploadAttachment,
     clear,
     submit,
     openMention,
