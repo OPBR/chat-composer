@@ -1,13 +1,18 @@
-export { createComposer } from './composer.js'
+export { createComposer } from './composer'
 export type {
   // Message structure
   MessagePart,
+  InlinePart,
+  AttachmentPart,
   TextPart,
   MentionPart,
   CodeBlockPart,
   ImagePart,
   FilePart,
   ComposedMessage,
+  // Upload
+  UploadStatus,
+  UploadHandler,
   // Config
   ComposerConfig,
   AttachmentConfig,
@@ -18,8 +23,8 @@ export type {
   ComposerController,
   // Plugin
   ComposerPlugin,
-} from './types.js'
+} from './types'
 // Utilities (useful for framework wrappers)
-export { looksLikeCode, detectLanguage } from './utils/codeDetection.js'
-export { buildComposedMessage } from './utils/message.js'
-export { resolveMentionSource } from './utils/mention.js'
+export { looksLikeCode, detectLanguage } from './utils/codeDetection'
+export { buildComposedMessage } from './utils/message'
+export { resolveMentionSource } from './utils/mention'

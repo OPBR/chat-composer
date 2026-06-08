@@ -1,4 +1,4 @@
-import type { MentionItem, MentionSource } from '../types.js'
+import type { MentionItem, MentionSource } from '../types'
 
 export async function resolveMentionSource(
   source: MentionSource,

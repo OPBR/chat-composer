@@ -21,21 +21,41 @@ export type CodeBlockPart = {
 
 export type ImagePart = {
   type: 'image'
+  id: string
   file: File
-  url: string // object URL for preview
+  localUrl: string // object URL for preview
+  remoteUrl?: string // URL after upload
+  uploadStatus: UploadStatus
+  uploadError?: string
+  fileName: string
   mimeType: string
   sizeBytes: number
 }
 
 export type FilePart = {
   type: 'file'
+  id: string
   file: File
-  name: string
+  localUrl?: string // object URL for preview (only if previewable)
+  remoteUrl?: string // URL after upload
+  uploadStatus: UploadStatus
+  uploadError?: string
+  fileName: string
   mimeType: string
   sizeBytes: number
 }
 
-export type MessagePart = TextPart | MentionPart | CodeBlockPart | ImagePart | FilePart
+// ─── Inline vs Attachment ──────────────────────────────────────────────────────
+
+export type InlinePart = TextPart | MentionPart | CodeBlockPart
+export type AttachmentPart = ImagePart | FilePart
+export type MessagePart = InlinePart | AttachmentPart
+
+// ─── Upload ────────────────────────────────────────────────────────────────────
+
+export type UploadStatus = 'local' | 'uploading' | 'uploaded' | 'error'
+
+export type UploadHandler = (file: File, id: string) => Promise<string>
 
 // ─── Composed Message ─────────────────────────────────────────────────────────
 // Final output handed to the AI
@@ -78,6 +98,8 @@ export type AttachmentConfig = {
 
 export type ComposerState = {
   parts: MessagePart[]
+  attachments: AttachmentPart[]
+  isComposing: boolean
   isMentionOpen: boolean
   mentionQuery: string
   mentionItems: MentionItem[]
@@ -92,6 +114,7 @@ export type ComposerConfig = {
   mentionTrigger?: string // default: '@'
   mentionSource?: MentionSource
   attachments?: AttachmentConfig
+  onUpload?: UploadHandler
   codeDetection?: boolean // auto-detect pasted code, default: true
   imagePaste?: boolean // handle image paste, default: true
   maxLength?: number
@@ -121,7 +144,8 @@ export type ComposerController = {
   insertMention(item: MentionItem): void
   insertCodeBlock(code: string, language?: string): void
   attachFile(file: File): void
-  removeAttachment(index: number): void
+  removeAttachment(id: string): void
+  uploadAttachment(id: string): Promise<void>
   clear(): void
 
   // Submission

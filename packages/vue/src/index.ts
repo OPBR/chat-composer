@@ -1,4 +1,4 @@
-export { useComposer } from './useComposer.js'
+export { useComposer } from './useComposer'
 
 export type {
   ComposerConfig,

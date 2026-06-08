@@ -5,7 +5,7 @@ import type {
   CodeBlockPart,
   ImagePart,
   FilePart,
-} from '../types.js'
+} from '../types'
 
 export function buildComposedMessage(parts: MessagePart[]): ComposedMessage {
   const mentions: MentionPart[] = []
