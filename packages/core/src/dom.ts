@@ -36,6 +36,7 @@ export function normalizeDOM(element: HTMLElement): void {
 
 export function createImageNode(id: string, src: string, fileName: string): HTMLElement {
   const span = document.createElement('span')
+  span.className = 'cc-node-image'
   span.setAttribute('contenteditable', 'false')
   span.setAttribute('data-cc-type', 'image')
   span.setAttribute('data-cc-id', id)
@@ -45,6 +46,7 @@ export function createImageNode(id: string, src: string, fileName: string): HTML
   img.setAttribute('alt', fileName)
 
   const label = document.createElement('span')
+  label.className = 'cc-node-image-label'
   label.textContent = fileName
 
   span.appendChild(img)
@@ -54,6 +56,7 @@ export function createImageNode(id: string, src: string, fileName: string): HTML
 
 export function createFileNode(id: string, fileName: string, sizeBytes: number): HTMLElement {
   const span = document.createElement('span')
+  span.className = 'cc-node-file'
   span.setAttribute('contenteditable', 'false')
   span.setAttribute('data-cc-type', 'file')
   span.setAttribute('data-cc-id', id)
@@ -63,6 +66,7 @@ export function createFileNode(id: string, fileName: string, sizeBytes: number):
 
 export function createCodeBlockNode(id: string, language: string, code: string): HTMLElement {
   const span = document.createElement('span')
+  span.className = 'cc-node-code-block'
   span.setAttribute('contenteditable', 'false')
   span.setAttribute('data-cc-type', 'code_block')
   span.setAttribute('data-cc-id', id)
@@ -72,6 +76,7 @@ export function createCodeBlockNode(id: string, language: string, code: string):
 
 export function createMentionNode(id: string, label: string): HTMLElement {
   const span = document.createElement('span')
+  span.className = 'cc-node-mention'
   span.setAttribute('contenteditable', 'false')
   span.setAttribute('data-cc-type', 'mention')
   span.setAttribute('data-cc-id', id)

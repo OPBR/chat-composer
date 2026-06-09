@@ -1,7 +1,3 @@
-/*
- * @Author: zhangy
- * @Date: 2026-06-08 21:40:09
- */
 import { createComposer } from '@chat-composer/core'
 
 const inputEl = document.getElementById('input') as HTMLElement
@@ -42,4 +38,19 @@ fileInput.addEventListener('change', () => {
     composer.attachFile(file)
   }
   fileInput.value = ''
+})
+
+// Click image thumbnail → lightbox
+inputEl.addEventListener('click', (e) => {
+  const img = (e.target as HTMLElement).closest('.cc-node-image img') as HTMLImageElement | null
+  if (!img) return
+  e.preventDefault()
+
+  const overlay = document.createElement('div')
+  overlay.className = 'cc-lightbox'
+  const fullImg = document.createElement('img')
+  fullImg.src = img.src
+  overlay.appendChild(fullImg)
+  overlay.addEventListener('click', () => overlay.remove())
+  document.body.appendChild(overlay)
 })
