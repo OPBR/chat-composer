@@ -7,8 +7,37 @@ const clearBtn = document.getElementById('clear-btn') as HTMLButtonElement
 const attachBtn = document.getElementById('attach-btn') as HTMLButtonElement
 const fileInput = document.getElementById('file-input') as HTMLInputElement
 const outputEl = document.getElementById('output') as HTMLElement
+const mentionDropdown = document.getElementById('mention-dropdown') as HTMLElement
+
+const MOCK_USERS = [
+  { id: 'u1', label: '@Alice', description: 'Frontend Dev' },
+  { id: 'u2', label: '@Bob', description: 'Backend Dev' },
+  { id: 'u3', label: '@Charlie', description: 'Designer' },
+  { id: 'u4', label: '@Diana', description: 'PM' },
+]
+
+function renderMentionDropdown(state: { isMentionOpen: boolean; mentionItems: any[] }) {
+  if (!state.isMentionOpen || state.mentionItems.length === 0) {
+    mentionDropdown.style.display = 'none'
+    return
+  }
+
+  mentionDropdown.style.display = 'block'
+  mentionDropdown.innerHTML = ''
+  for (const item of state.mentionItems) {
+    const div = document.createElement('div')
+    div.className = 'mention-item'
+    div.innerHTML = `<span class="mention-item-label">${item.label}</span><span class="mention-item-desc">${item.description ?? ''}</span>`
+    div.addEventListener('click', () => {
+      composer.insertMention(item)
+      mentionDropdown.style.display = 'none'
+    })
+    mentionDropdown.appendChild(div)
+  }
+}
 
 const composer = createComposer(inputEl, {
+  mentionSource: MOCK_USERS,
   onSubmit: async (message) => {
     outputEl.textContent = JSON.stringify(message, null, 2)
     console.log('Submitted:', message)
@@ -16,6 +45,7 @@ const composer = createComposer(inputEl, {
   onChange: (state) => {
     sendBtn.disabled = state.isEmpty || state.isSubmitting
     sendBtn.textContent = state.isSubmitting ? 'Sending…' : 'Send'
+    renderMentionDropdown(state)
   },
 })
 
