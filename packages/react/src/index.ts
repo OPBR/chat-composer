@@ -1,5 +1,6 @@
 // Hooks
-export { useComposer, useComposerInput } from './hooks/useComposer'
+export { useComposer } from './hooks/useComposer'
+export type { UseComposerReturn } from './hooks/useComposer'
 
 // Re-export core types so consumers only need one import
 export type {

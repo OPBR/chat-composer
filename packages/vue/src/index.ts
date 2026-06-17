@@ -1,4 +1,5 @@
 export { useComposer } from './useComposer'
+export type { UseComposerReturn } from './useComposer'
 
 export type {
   ComposerConfig,
