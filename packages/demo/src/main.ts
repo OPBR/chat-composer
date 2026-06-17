@@ -1,4 +1,4 @@
-import { createComposer } from '@chat-composer/core'
+import { createComposer, type MentionItem } from '@chat-composer/core'
 
 const inputEl = document.getElementById('input') as HTMLElement
 const sendBtn = document.getElementById('send-btn') as HTMLButtonElement
@@ -9,31 +9,52 @@ const fileInput = document.getElementById('file-input') as HTMLInputElement
 const outputEl = document.getElementById('output') as HTMLElement
 const mentionDropdown = document.getElementById('mention-dropdown') as HTMLElement
 
-const MOCK_USERS = [
+const MOCK_USERS: MentionItem[] = [
   { id: 'u1', label: '@Alice', description: 'Frontend Dev' },
   { id: 'u2', label: '@Bob', description: 'Backend Dev' },
   { id: 'u3', label: '@Charlie', description: 'Designer' },
   { id: 'u4', label: '@Diana', description: 'PM' },
 ]
 
-function renderMentionDropdown(state: { isMentionOpen: boolean; mentionItems: any[] }) {
+function positionDropdown() {
+  const sel = window.getSelection()
+  if (!sel || !sel.rangeCount) {
+    mentionDropdown.style.display = 'none'
+    return
+  }
+  const range = sel.getRangeAt(0).cloneRange()
+  range.collapse(true)
+  const rect = range.getBoundingClientRect()
+  const inputRect = inputEl.getBoundingClientRect()
+  mentionDropdown.style.display = 'block'
+  mentionDropdown.style.position = 'absolute'
+  mentionDropdown.style.left = `${rect.left}px`
+  mentionDropdown.style.top = `${rect.bottom + 4}px`
+}
+
+function renderMentionDropdown(state: {
+  isMentionOpen: boolean
+  mentionItems: MentionItem[]
+  mentionActiveIndex: number
+}) {
   if (!state.isMentionOpen || state.mentionItems.length === 0) {
     mentionDropdown.style.display = 'none'
     return
   }
 
-  mentionDropdown.style.display = 'block'
+  positionDropdown()
   mentionDropdown.innerHTML = ''
-  for (const item of state.mentionItems) {
+  state.mentionItems.forEach((item, i) => {
     const div = document.createElement('div')
-    div.className = 'mention-item'
+    div.className = 'mention-item' + (i === state.mentionActiveIndex ? ' mention-item-active' : '')
     div.innerHTML = `<span class="mention-item-label">${item.label}</span><span class="mention-item-desc">${item.description ?? ''}</span>`
-    div.addEventListener('click', () => {
+    div.addEventListener('mousedown', (e) => {
+      e.preventDefault()
       composer.insertMention(item)
       mentionDropdown.style.display = 'none'
     })
     mentionDropdown.appendChild(div)
-  }
+  })
 }
 
 const composer = createComposer(inputEl, {

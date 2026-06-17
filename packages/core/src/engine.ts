@@ -44,6 +44,7 @@ export function createComposerEngine(element: HTMLElement, config: ComposerConfi
   let isMentionOpen = false
   let mentionQuery = ''
   let mentionItems: MentionItem[] = []
+  let mentionActiveIndex = 0
 
   // ── Sync state ──────────────────────────────────────────────────────────────
   function syncParts(): MessagePart[] {
@@ -64,6 +65,7 @@ export function createComposerEngine(element: HTMLElement, config: ComposerConfi
       isMentionOpen,
       mentionQuery,
       mentionItems: [...mentionItems],
+      mentionActiveIndex,
       isSubmitting,
       isEmpty:
         parts.length === 0 || parts.every((p) => p.type === 'text' && p.content.trim() === ''),
@@ -120,7 +122,19 @@ export function createComposerEngine(element: HTMLElement, config: ComposerConfi
 
     const node = createMentionNode(item.id, item.label)
     element.appendChild(node)
-    element.appendChild(document.createTextNode(' '))
+    const spaceNode = document.createTextNode(' ')
+    element.appendChild(spaceNode)
+
+    // Move cursor after the space
+    const sel = window.getSelection()
+    if (sel) {
+      const range = document.createRange()
+      range.setStartAfter(spaceNode)
+      range.collapse(true)
+      sel.removeAllRanges()
+      sel.addRange(range)
+    }
+
     closeMention()
     notify()
   }
@@ -175,6 +189,7 @@ export function createComposerEngine(element: HTMLElement, config: ComposerConfi
     isMentionOpen = false
     mentionQuery = ''
     mentionItems = []
+    mentionActiveIndex = 0
     notify()
   }
 
@@ -188,6 +203,7 @@ export function createComposerEngine(element: HTMLElement, config: ComposerConfi
     isMentionOpen = false
     mentionQuery = ''
     mentionItems = []
+    mentionActiveIndex = 0
     notify()
   }
 
@@ -196,6 +212,7 @@ export function createComposerEngine(element: HTMLElement, config: ComposerConfi
     if (cfg.mentionSource) {
       mentionItems = await resolveMentionSource(cfg.mentionSource, query)
     }
+    mentionActiveIndex = 0
     notify()
   }
 
@@ -238,6 +255,24 @@ export function createComposerEngine(element: HTMLElement, config: ComposerConfi
       if (e.key === 'Escape') {
         e.preventDefault()
         closeMention()
+        return
+      }
+      if (e.key === 'ArrowDown') {
+        e.preventDefault()
+        mentionActiveIndex = (mentionActiveIndex + 1) % mentionItems.length
+        notify()
+        return
+      }
+      if (e.key === 'ArrowUp') {
+        e.preventDefault()
+        mentionActiveIndex = (mentionActiveIndex - 1 + mentionItems.length) % mentionItems.length
+        notify()
+        return
+      }
+      if (e.key === 'Enter' && mentionItems.length > 0) {
+        e.preventDefault()
+        insertMention(mentionItems[mentionActiveIndex])
+        return
       }
       return
     }
@@ -291,16 +326,28 @@ export function createComposerEngine(element: HTMLElement, config: ComposerConfi
 
   function onInput() {
     if (ime.isComposing()) return
-    // Check for mention trigger
-    const text = element.textContent ?? ''
-    const triggerIdx = text.lastIndexOf(cfg.mentionTrigger)
-    if (triggerIdx !== -1) {
-      const query = text.slice(triggerIdx + 1)
-      if (!query.includes(' ')) {
-        openMention(query)
-        return
+
+    // Extract mention query from cursor position
+    const sel = window.getSelection()
+    if (sel && sel.rangeCount) {
+      const range = sel.getRangeAt(0)
+      const node = range.startContainer
+
+      if (node.nodeType === Node.TEXT_NODE) {
+        const textBeforeCursor = (node as Text).textContent?.slice(0, range.startOffset) ?? ''
+        const triggerIdx = textBeforeCursor.lastIndexOf(cfg.mentionTrigger)
+        if (triggerIdx !== -1) {
+          const query = textBeforeCursor.slice(triggerIdx + 1)
+          if (!query.includes(' ')) {
+            if (isMentionOpen && mentionQuery === query) return
+            mentionActiveIndex = 0
+            openMention(query)
+            return
+          }
+        }
       }
     }
+
     if (isMentionOpen) closeMention()
     notify()
   }

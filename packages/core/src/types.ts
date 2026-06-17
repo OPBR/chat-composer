@@ -103,6 +103,7 @@ export type ComposerState = {
   isMentionOpen: boolean
   mentionQuery: string
   mentionItems: MentionItem[]
+  mentionActiveIndex: number
   isSubmitting: boolean
   isEmpty: boolean
 }
