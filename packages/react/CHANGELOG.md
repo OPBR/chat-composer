@@ -1,5 +1,13 @@
 # @chat-composer/react
 
+## 1.0.1
+
+### Patch Changes
+
+- 2265421: chore: improve package descriptions, keywords, and add LICENSE file
+- Updated dependencies [2265421]
+  - @chat-composer/core@1.0.1
+
 ## 1.0.0
 
 ### Major Changes

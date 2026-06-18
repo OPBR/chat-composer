@@ -1,6 +1,6 @@
 {
   "name": "@chat-composer/react",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "React hooks and components for chat-composer — useComposer, ComposerInput, MentionDropdown, AttachmentList",
   "keywords": [
     "ai",
