@@ -1,6 +1,6 @@
 {
   "name": "@chat-composer/vue",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Vue 3 composable and components for chat-composer — useComposer, ComposerInput, MentionDropdown, AttachmentList",
   "keywords": [
     "ai",
