@@ -43,20 +43,27 @@ export default tseslint.config(
       react: { version: 'detect' },
     },
   },
+  ...vue.configs['flat/recommended'].map((config) => ({
+    ...config,
+    files: ['packages/vue/src/**/*.vue'],
+  })),
   {
     files: ['packages/vue/src/**/*.vue'],
     languageOptions: {
-      parser: vue.parser,
+      globals: {
+        window: 'readonly',
+        document: 'readonly',
+      },
       parserOptions: {
         parser: tseslint.parser,
+        extraFileExtensions: ['.vue'],
       },
     },
-    plugins: {
-      vue,
-    },
     rules: {
-      ...vue.configs['flat/recommended'][2].rules,
       'vue/no-unused-vars': 'warn',
+      'vue/max-attributes-per-line': 'off',
+      'vue/html-self-closing': 'off',
+      'vue/multiline-html-element-content-newline': 'off',
     },
   },
 )

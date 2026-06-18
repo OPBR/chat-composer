@@ -42,9 +42,11 @@
     "vue": ">=3.3.0"
   },
   "devDependencies": {
+    "@tsdown/css": "^0.22.3",
     "eslint-plugin-vue": "^10.9.2",
-    "tsdown": "^0.22.2",
+    "tsdown": "^0.22.3",
     "typescript": "^6.0.3",
+    "unplugin-vue": "^7.2.0",
     "vue": "^3.5.0",
     "vue-tsc": "^3.3.0"
   }
