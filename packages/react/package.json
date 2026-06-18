@@ -1,6 +1,6 @@
 {
   "name": "@chat-composer/react",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "description": "React bindings for chat-composer",
   "keywords": [
     "ai",
