@@ -1,7 +1,7 @@
 {
   "name": "@chat-composer/core",
   "version": "1.0.0",
-  "description": "Framework-agnostic core for chat-composer",
+  "description": "Framework-agnostic rich-text input for AI chat — @mentions, attachments, code detection, structured JSON output",
   "keywords": [
     "ai",
     "chat",
@@ -9,7 +9,10 @@
     "composer",
     "mention",
     "attachment",
-    "code-block"
+    "code-block",
+    "contenteditable",
+    "structured-data",
+    "rich-text"
   ],
   "license": "MIT",
   "publishConfig": {

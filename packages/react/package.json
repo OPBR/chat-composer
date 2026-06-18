@@ -1,14 +1,17 @@
 {
   "name": "@chat-composer/react",
   "version": "1.0.0",
-  "description": "React bindings for chat-composer",
+  "description": "React hooks and components for chat-composer — useComposer, ComposerInput, MentionDropdown, AttachmentList",
   "keywords": [
     "ai",
     "chat",
     "react",
     "composer",
     "mention",
-    "attachment"
+    "attachment",
+    "input",
+    "contenteditable",
+    "rich-text"
   ],
   "license": "MIT",
   "publishConfig": {
