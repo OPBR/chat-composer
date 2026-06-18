@@ -1,7 +1,7 @@
 {
   "name": "@chat-composer/vue",
   "version": "1.0.0",
-  "description": "Vue 3 bindings for chat-composer",
+  "description": "Vue 3 composable and components for chat-composer — useComposer, ComposerInput, MentionDropdown, AttachmentList",
   "keywords": [
     "ai",
     "chat",
@@ -9,7 +9,10 @@
     "vue3",
     "composer",
     "mention",
-    "attachment"
+    "attachment",
+    "input",
+    "contenteditable",
+    "rich-text"
   ],
   "license": "MIT",
   "publishConfig": {

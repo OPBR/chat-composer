@@ -1,7 +1,7 @@
 {
   "name": "chat-composer-monorepo",
   "private": true,
-  "description": "Framework-agnostic AI chat input composer",
+  "description": "Framework-agnostic rich-text input for AI chat apps — @mentions, attachments, code detection, structured JSON output",
   "workspaces": [
     "packages/*"
   ],
